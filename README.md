@@ -1,0 +1,2 @@
+# kompilatory
+AGH kompilatory
