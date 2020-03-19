@@ -27,6 +27,7 @@ tokens = ['DOTPLUS',       # .+
           'GREATEREQUAL',  # >=
           'NOTEQUAL',      # !=
           'EQUAL',         # ==
+          'TRANSPOSE',
           'ID',
           'INTNUM',
           'FLOATNUM',
@@ -34,7 +35,7 @@ tokens = ['DOTPLUS',       # .+
           'COMMENT'
           ] + list(reserved.values())
 
-literals = "+-*/=()[]{}:',;<>"
+literals = "+-*/=()[]{}:,;<>"
 
 t_DOTPLUS = r'\.\+'
 t_DOTMINUS = r'\.\-'
@@ -48,6 +49,7 @@ t_LESSEQUAL = r'\<\='
 t_GREATEREQUAL = r'\>\='
 t_NOTEQUAL = r'\!\='
 t_EQUAL = r'\=\='
+t_TRANSPOSE = r'\''
 t_STRING = r'\"([^\\\n]|(\\.))*?\"'
 
 
