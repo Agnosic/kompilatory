@@ -7,8 +7,8 @@ import ply.yacc as yacc
 tokens = scanner.tokens
 
 precedence = (
-    # ("left", 'IF'),
-    # ("left", 'ELSE'),
+    ("left", 'IFX'),
+    ("left", 'ELSE'),
     ("right", '='),
     ("nonassoc", '<', '>', 'GREATEREQUAL', 'LESSEQUAL', 'EQUAL', 'NOTEQUAL'),
     ("left", '+', '-', 'DOTPLUS', 'DOTMINUS'),
@@ -47,7 +47,58 @@ def p_instructions_2(p):
 
 
 def p_instruction(p):
-    """instruction : assign """
+    """instruction : block 
+                   | if 
+                   | print
+                   | while 
+                   | for 
+                   | break 
+                   | continue
+                   | return 
+                   | assign """
+
+
+def p_block(p):
+    """ block : '{' instructions '}' """
+
+
+def p_if(p):
+    """ if : IF '(' assignment ')' instruction %prec IFX 
+           | IF '(' assignment ')' instruction ELSE instruction """
+
+
+def p_print(p):
+    """ print : PRINT arguments ';' """
+
+
+def p_arguments(p):
+    """ arguments : assignment
+                  | assignment ',' arguments """
+
+
+def p_while(p):
+    """ while : WHILE '(' assignment ')' instruction """
+
+
+def p_for(p):
+    """ for : FOR ID '=' range instruction """
+
+
+def p_range(p):
+    """ range : expression ':' expression """
+
+
+def p_break(p):
+    """ break : BREAK ';' """
+
+
+def p_continue(p):
+    """ continue : CONTINUE ';' """
+
+
+def p_return(p):
+    """ return : RETURN ';' 
+               | RETURN assignment ';' """
 
 
 def p_assign(p):
@@ -61,7 +112,8 @@ def p_assign(p):
 
 def p_maybe_array_range(p):
     """ maybe_array_range : empty
-                    | '[' INTNUM ',' INTNUM ']' """
+                    | '[' INTNUM ',' INTNUM ']' 
+                    | '[' INTNUM ']' """
 
 
 def p_assignment(p):
