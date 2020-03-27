@@ -55,7 +55,8 @@ def p_instruction(p):
                    | break 
                    | continue
                    | return 
-                   | assign """
+                   | assign
+                   | assign_in_array """
 
 
 def p_block(p):
@@ -102,17 +103,24 @@ def p_return(p):
 
 
 def p_assign(p):
-    """ assign : ID maybe_array_range '=' assign
-               | ID maybe_array_range '=' assignment ';'
-               | ID maybe_array_range PLUSASSIGN assignment ';'
-               | ID maybe_array_range MINUSASSIGN assignment ';'
-               | ID maybe_array_range TIMESASSIGN assignment ';'
-               | ID maybe_array_range DIVIDEASSIGN assignment ';' """
+    """ assign : ID '=' assign
+               | ID '=' assignment ';'
+               | ID PLUSASSIGN assignment ';'
+               | ID MINUSASSIGN assignment ';'
+               | ID TIMESASSIGN assignment ';'
+               | ID DIVIDEASSIGN assignment ';' """
+
+def p_assign_in_array(p):
+    """ assign_in_array : ID array_range '=' assign
+                        | ID array_range '=' assignment ';'
+                        | ID array_range PLUSASSIGN assignment ';'
+                        | ID array_range MINUSASSIGN assignment ';'
+                        | ID array_range TIMESASSIGN assignment ';'
+                        | ID array_range DIVIDEASSIGN assignment ';' """
 
 
-def p_maybe_array_range(p):
-    """ maybe_array_range : empty
-                    | '[' INTNUM ',' INTNUM ']' 
+def p_array_range(p):
+    """ array_range : '[' INTNUM ',' INTNUM ']' 
                     | '[' INTNUM ']' """
 
 
@@ -186,11 +194,6 @@ def p_matrix_special_features(p):
 def p_number(p):
     """ number : INTNUM
                | FLOATNUM """
-
-
-def p_empty(p):
-    'empty :'
-    pass
 
 
 parser = yacc.yacc()
