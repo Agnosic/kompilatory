@@ -195,5 +195,11 @@ def p_number(p):
     """ number : INTNUM
                | FLOATNUM """
 
+def p_error(p):
+    if p:
+        print("Syntax error at '%s' on line %d" % (p.value, p.lineno))
+    else:
+        print("Syntax error at EOI")
+
 
 parser = yacc.yacc()
