@@ -105,34 +105,46 @@ class TypeChecker(NodeVisitor):
         elif op in ['+=', '-=', '*=', '/=']:
             type2 = self.visit(node.left)
             if type1 != type2:
-                print("Incompatibles types")
+                print("Incompatible types")
 
     def visit_AssignInArray(self, node):
-        pass
+        type1 = self.visit(node.right)
+        op = node.op
+        if op == '=':
+            self.symbol_table.put(node.left.name, VariableSymbol(node.left.name, type1))
+        elif op in ['+=', '-=', '*=', '/=']:
+            type2 = self.visit(node.left)
+            if type1 != type2:
+                print("Incompatibles types")
 
     def visit_Ref(self, node):
         pass
 
     def visit_Array(self, node):
-        self.visit(node.dimensions)
+        return self.visit(node.dimensions)
 
     def visit_Dimensions(self, node):
         sizes = []
+        type = ''
         for dimension in node.dimensions:
             sizes.append(len(dimension.values))
-            self.visit(dimension)
+            type = self.visit(dimension)
         if len(set(sizes)) != 1:
             print("Vectors in matrix has diffrent sizes")
+        return [type , [len(sizes), sizes[0]]]
 
     def visit_Values(self, node):
         types = []
         for value in node.values:
-            types.append(self.visit(value))
+            types.append(self.visit(value)[0])
         if len(set(types)) != 1:
             print("Vectors must have same types")
+        return types[0]
 
     def visit_RelationalExpression(self, node):
-        pass
+        type1 = self.visit(node.left)     # type1 = node.left.accept(self)
+        type2 = self.visit(node.right)    # type2 = node.right.accept(self)
+        op    = node.op
 
     def visit_BinExpr(self, node):
                                           # alternative usage,
@@ -140,11 +152,19 @@ class TypeChecker(NodeVisitor):
         type1 = self.visit(node.left)     # type1 = node.left.accept(self)
         type2 = self.visit(node.right)    # type2 = node.right.accept(self)
         op    = node.op
+        if isinstance(type1[1], list) != isinstance(type2[1], list):
+            print('Cannot do binary expression with normal value and matrix')
+        elif op in ['+', '-'] and len(type1) == 2 and type1[1] != type2[1]:
+            print('Matrix have diffrent sizes')
+        elif op in ['+', '-', '*', '/'] and len(type1) == 1 and type1[0] != type2[0]:
+            print('Incompatible types in binary expression')
         # ...
         #
 
     def visit_Transpose(self, node):
-        pass
+        type = self.visit(node.variable)
+        if isinstance(type[1], list):
+            print('Cannot transponse seomthing thats not a vector or matrix')
 
     def visit_UMinus(self, node):
         type1 = self.visit(node.assignment)
@@ -154,16 +174,18 @@ class TypeChecker(NodeVisitor):
             print("Bad type for uminus!")
 
     def visit_MatrixSpecial(self, node):
-        pass
+        type =  self.visit(node.value) ##nie ma potrzeby sprawdzac, poniewaz scanner juz sprawdza typ i ilosc argumentow
+        type[1] = [type[1], type[1]]
+        return type
 
     def visit_IntNum(self, node):
-        return 'int'
+        return ['int', node.value]
 
     def visit_FloatNum(self, node):
-        return 'float'
+        return ['float', node.value]
 
     def visit_String(self, node):
-        return 'string'
+        return ['string', node.value]
 
     def visit_Variable(self, node):
         type = self.symbol_table.get(node.name)
