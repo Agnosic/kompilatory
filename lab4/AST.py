@@ -8,7 +8,7 @@ class InstructionsOpt(Node):
 class Instructions(Node):
     def __init__(self, instruction):
       self.instructions = [instruction]
-    
+
     def append(self, instruction):
       self.instructions.append(instruction)
 
@@ -30,7 +30,7 @@ class Print(Node):
 class Arguments(Node):
     def __init__(self, argument):
       self.arguments = [argument]
-    
+
     def append(self, argument):
       self.arguments.append(argument)
 
@@ -53,7 +53,7 @@ class Range(Node):
 class Break(Node):
     def __init__(self):
       pass
-    
+
 class Continue(Node):
     def __init__(self):
       pass
@@ -87,14 +87,14 @@ class Array(Node):
 class Dimensions(Node):
     def __init__(self, dimension):
       self.dimensions = [dimension]
-    
+
     def append(self, dimension):
       self.dimensions.append(dimension)
 
 class Values(Node):
     def __init__(self, value):
       self.values = [value]
-    
+
     def append(self, value):
       self.values.append(value)
 

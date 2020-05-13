@@ -48,7 +48,7 @@ class TypeChecker(NodeVisitor):
         self.visit(node.instruction)
         self.symbol_table.popScope()
 
-    
+
     def visit_IfElse(self, node):
         self.symbol_table.pushScope('if')
         self.visit(node.condition)
@@ -64,7 +64,7 @@ class TypeChecker(NodeVisitor):
     def visit_Arguments(self, node):
         for argument in node.arguments:
             self.visit(argument)
-        
+
     def visit_While(self, node):
         self.symbol_table.pushNesting()
         self.symbol_table.pushScope('while')
@@ -80,7 +80,7 @@ class TypeChecker(NodeVisitor):
         self.symbol_table.put(node.variable.name, VariableSymbol(node.variable.name, type))
         self.visit(node.instruction)
         self.symbol_table.popScope()
-        self.symbol_table.pushNesting()
+        self.symbol_table.popNesting()
 
     def visit_Range(self, node):
         type1 = self.visit(node.start)
@@ -117,12 +117,19 @@ class TypeChecker(NodeVisitor):
         self.visit(node.dimensions)
 
     def visit_Dimensions(self, node):
-        pass
-
-
+        sizes = []
+        for dimension in node.dimensions:
+            sizes.append(len(dimension.values))
+            self.visit(dimension)
+        if len(set(sizes)) != 1:
+            print("Vectors in matrix has diffrent sizes")
 
     def visit_Values(self, node):
-        pass
+        types = []
+        for value in node.values:
+            types.append(self.visit(value))
+        if len(set(types)) != 1:
+            print("Vectors must have same types")
 
     def visit_RelationalExpression(self, node):
         pass
@@ -130,12 +137,12 @@ class TypeChecker(NodeVisitor):
     def visit_BinExpr(self, node):
                                           # alternative usage,
                                           # requires definition of accept method in class Node
-        type1 = self.visit(node.left)     # type1 = node.left.accept(self) 
+        type1 = self.visit(node.left)     # type1 = node.left.accept(self)
         type2 = self.visit(node.right)    # type2 = node.right.accept(self)
         op    = node.op
-        # ... 
+        # ...
         #
- 
+
     def visit_Transpose(self, node):
         pass
 
@@ -143,6 +150,8 @@ class TypeChecker(NodeVisitor):
         type1 = self.visit(node.assignment)
         if type1 != 'string':
             return type1
+        else:
+            print("Bad type for uminus!")
 
     def visit_MatrixSpecial(self, node):
         pass
@@ -159,5 +168,5 @@ class TypeChecker(NodeVisitor):
     def visit_Variable(self, node):
         type = self.symbol_table.get(node.name)
         return type.type
-        
+
 
