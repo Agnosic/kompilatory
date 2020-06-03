@@ -1,34 +1,41 @@
 class Memory:
 
     def __init__(self, name):
-      pass # memory name
+      self.table = {}
+      self.name = name
 
     def has_key(self, name):
-      pass  # variable name
+      return name in self.table
 
     def get(self, name):
-      pass         # gets from memory current value of variable <name>
+      return self.table[name]         # gets from memory current value of variable <name>
 
     def put(self, name, value):
-      pass  # puts into memory current value of variable <name>
+      self.table[name] = value  # puts into memory current value of variable <name>
 
 
 class MemoryStack:
 
-    def __init__(self, memory=None):
-      pass # initialize memory stack with memory <memory>
+    def __init__(self, memory=Memory("global")):
+      self.stack = [] # initialize memory stack with memory <memory>
+      self.stack.append(memory)
 
     def get(self, name):
-      pass             # gets from memory stack current value of variable <name>
+      for memory in self.stack[::-1]:
+        if memory.has_key(name):
+          return memory.get(name)          # gets from memory stack current value of variable <name>
+      return None
 
     def insert(self, name, value):
-      pass # inserts into memory stack variable <name> with value <value>
+      self.stack[len(self.stack) - 1].put(name, value) # inserts into memory stack variable <name> with value <value>
 
     def set(self, name, value):
-      pass # sets variable <name> to value <value>
+      for memory in self.stack[::-1]:
+        if memory.has_key(name):
+          return memory.put(name, value)  # sets variable <name> to value <value>
 
     def push(self, memory):
-      pass # pushes memory <memory> onto the stack
+      self.stack.append(memory) # pushes memory <memory> onto the stack
 
     def pop(self):
-      pass          # pops the top memory from the stack
+      self.stack.pop()        # pops the top memory from the stack

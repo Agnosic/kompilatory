@@ -6,18 +6,12 @@ class InstructionsOpt(Node):
     def __init__(self, instructions=None):
         self.instructions = instructions
 
-    def accept(self, visitor):
-        visitor.visit(self)
-
 class Instructions(Node):
     def __init__(self, instruction):
       self.instructions = [instruction]
 
     def append(self, instruction):
       self.instructions.append(instruction)
-
-    def accept(self, visitor):
-        visitor.visit(self)
 
 class If(Node):
     def __init__(self, condition, instruction):
